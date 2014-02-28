@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cp /opt/stack/horizon/static/dashboard/js/live2.data.js.bak /opt/stack/horizon/static/dashboard/js/live2.data.js

@@ -1,0 +1,61 @@
+#!/bin/bash
+
+DIRNAME=$(dirname $0)
+source $DIRNAME/commands.sh
+
+case $1 in
+ifconfig)
+	getIfconfig
+	;;
+br)
+	getBridges
+	;;
+ovs)
+	getSwitches
+	;;
+l2)
+	getL2Devices
+	;;
+vir)
+	getVirDevices
+	;;
+phy)
+	getPhyDevices
+	;;
+eth)
+	getEth
+	;;
+ethdetail)
+	getEthDetail
+	;;
+links)
+	getPhyLinks
+	;;
+host)
+	getInstances
+	;;
+pairs)
+        getVethPairs
+        ;;
+tags)
+        getTaggedInterfaces
+        ;;
+nic)
+	getNics $2
+	;;
+ip)
+	getIP $2
+	;;
+tap)
+	getTap $2
+	;;
+interface)
+	getInterfaces $2
+	;;
+pair)
+	getPair $2
+	;;
+tag)
+	getInterfaceTag $2
+	;;
+esac	

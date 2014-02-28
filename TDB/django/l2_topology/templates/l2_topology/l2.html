@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>L2 Network Topology</title>
+	</head>
+	<body>
+		<script type="text/javascript" src="live2.data.js"></script>
+		<script type="text/javascript" src="svg.js"></script>
+		<script type="text/javascript" src="l2.js"></script>
+		<script type="text/javascript">
+			var l2Canvas = null;
+			window.onload = function() {
+				var svg = document.getElementById( "l2-canvas");
+				l2Canvas = svg.appendChild( document.createElementNS( NS_SVG, "g"));
+				new Host( l2Canvas, data).move( 18, 18);
+			};
+			var l2Ratio = 1;
+			var l2Shift = [ 0, 0];
+			var l2Mouse = null;
+			var l2Click = function( container, event) {
+				if( event.shiftKey && event.ctrlKey)
+					l2Ratio = 1;
+				if( event.shiftKey)
+					l2Ratio *= 0.9;
+				else if( event.ctrlKey)
+					l2Ratio *= 1.1;
+				else
+					return;
+				l2Trans( 0, 0);
+			};
+			var l2MouseDown = function( container, event) {
+				container.style.cursor = "move";
+				l2Mouse = [ event.clientX, event.clientY];
+			};
+			var l2MouseUp = function( container, event) {
+				var deltaX = event.clientX - l2Mouse[ 0];
+				var deltaY = event.clientY - l2Mouse[ 1];
+				l2Shift = [ l2Shift[ 0] + deltaX, l2Shift[ 1] + deltaY];
+				l2Mouse = null;
+				container.style.cursor = "";
+			};
+			var l2MouseMove = function( container, event) {
+				if( !l2Mouse) return;
+				var deltaX = event.clientX - l2Mouse[ 0];
+				var deltaY = event.clientY - l2Mouse[ 1];
+				l2Trans( deltaX, deltaY);
+			};
+			var l2Trans = function( deltaX, deltaY) {
+				SVG.setTransform( l2Canvas, "translate( " + ( l2Shift[ 0] + deltaX) + "," + ( l2Shift[ 1] + deltaY) + ") scale( " + l2Ratio + ")");
+			};
+		</script>
+		<style type="text/css">
+			body { margin: 0px;}
+			div.container{ height: 1080px;}
+			div.container{ -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;}
+			svg { width: 100%; height: 100%;}
+
+			span.vert-text { display: block; width: 100%; height: 100%;
+				color: white; font-family: Arial, sans-serif; font-size: 12px; cursor: default; text-align: right;
+				overflow: hidden; text-overflow: ellipsis; -o-text-overflow: ellipsis;
+			}
+
+			text { font-family: Arial, sans-serif; font-size: 12px; cursor: default;}
+
+			g.icon circle	{ stroke-width: 2px;}
+			g.icon path		{ stroke: none;}
+
+			rect.box	{ fill: white; stroke-width: 3px;}
+
+			text.caption	{ stroke: none; font-weight: bold;}
+			text.label		{ stroke: none; fill: white;}
+
+			.nofill		{ fill: none;}
+			.nostroke	{ stroke: none;}
+
+			g.ho			{ stroke: gray; fill: gray;}
+
+			g.vm			{ stroke: #1f6e1f; fill: #1f6e1f;}
+			g.vm:hover	{ stroke: #307a30; fill: #307a30;}
+
+			g.br			{ stroke: #29468f; fill: #29468f;}
+			g.br:hover	{ stroke: #355fb8; fill: #355fb8;}
+
+			g.sw			{ stroke: #850000; fill: #850000;}
+			g.sw:hover	{ stroke: #b30000; fill: #b30000;}
+
+			path.co-back	{ stroke: #888888; stroke-width: 6px; fill: none;}
+			path.co-fore	{ stroke: #525252; stroke-width: 3px; fill: none;/* filter: url(#glow); /**/}
+		</style>
+		<div id="l2-container" class="container" onmousedown="l2MouseDown(this,event);" onmouseup="l2MouseUp(this,event);" onmousemove="l2MouseMove( this, event);"
+				onclick="l2Click( this, event);">
+			<svg id="l2-canvas" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+				<defs>
+					<g id="vm-icon" class="icon">
+						<circle class="nofill" r="12" style="fill: white;" />
+						<path class="nostroke" d="M -4 -7 L 4 -7 L 5 -6 L 5 6 L 4 7 L -4 7 L -5 6 L -5 -6 L -4 -7 
+								M -3 -5 L -3 -4 L 3 -4 L 3 -5 L -3 -5 
+								M -3 -3 L -3 -2 L 3 -2 L 3 -3 L -3 -3 
+								M -3 -1 L -3 -0 L 3 -0 L 3 -1 L -3 -1 
+								M -3 2 L -3 4 L -1 4 L -1 2 L -3 2 
+								" />
+					</g>
+					<g id="br-icon-unit">
+						<path class="nostroke" d="M -7 0 L -3 4 L -3 2 L 0 2 L 0 -2 L -3 -2 L -3 -4 L -7 0" />
+					</g>
+					<g id="br-icon" class="icon">
+						<circle class="nofill" r="12" style="fill: white;" />
+						<use xlink:href="#br-icon-unit" transform="translate( 0, -2)" />
+						<use xlink:href="#br-icon-unit" transform="translate( 0, 2) rotate( 180)" />
+					</g>
+					<g id="sw-icon">
+						<g class="icon">
+						<circle class="nofill" r="12" style="fill: white;" />
+						<use xlink:href="#br-icon-unit" transform="translate( 0, -6)" />
+						<use xlink:href="#br-icon-unit" transform="translate( 0, -2) rotate( 180)" />
+						<use xlink:href="#br-icon-unit" transform="translate( 0, 2)" />
+						<use xlink:href="#br-icon-unit" transform="translate( 0, 6) rotate( 180)" />
+					</g></g>
+					<path id="po-lower" class="nostroke" d="M -10 0 l 0 -40 a 5 5 0 0 1 5 -5 l 10 0 a 5 5 0 0 1 5 5 l 0 40 Z" />
+					<use id="po-upper" xlink:href="#po-lower" transform="rotate( 180)" />
+					<path id="po-host" class="nostroke" d="M -22.5 0 l 0 -15 a 5 5 0 0 1 5 -5 l 35 0 a 5 5 0 0 1 5 5 l 0 15 Z" transform="translate( 0, 20)" />
+	
+					<filter id="glow">
+						<feColorMatrix type="matrix" 
+							values="0 0 0 0 1
+										0 0 0 0 1
+										0 0 0 0 1
+										0 0 0 1 0"/>
+						<feGaussianBlur stdDeviation="2" result="coloredBlur" />
+						<feMerge>
+							<feMergeNode in="coloredBlur" />
+							<feMergeNode in="SourceGraphic" />
+						</feMerge>
+					</filter>
+				</defs>
+			</svg>
+		</div>
+	</body>
+</html>
